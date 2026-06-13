@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StockMeta Pro - AI Stock Metadata Generator & Extractor</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <!-- FontAwesome for Premium Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css">
   
   <!-- EXIF Library for Image Metadata Extraction -->
-  <script src="https://cdn.jsdelivr.net/npm/exif-js?v=1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
 </head>
 <body>
+
   <!-- ==========================================================================
        TOP NAVBAR / HEADER
        ========================================================================== -->
@@ -60,64 +60,31 @@
     </div>
   </header>
 
-<div class="app-layout">
-  <!-- NEW LEFT SIDE NAVIGATION RAIL -->
-  <aside class="side-nav-rail">
-    <button class="nav-rail-btn active" data-mode="metadata" title="Metadata Generator">
-      <i class="fa-solid fa-tags"></i>
-    </button>
-    <button class="nav-rail-btn" data-mode="image-to-prompt" title="Image to Prompts">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-    </button>
-    <!-- SVG Generator -->
-    <button class="nav-rail-btn" data-mode="image-to-svg" title="Image to SVG Generator">
-      <i class="fa-solid fa-bezier-curve"></i>
-    </button>
-    <button class="nav-rail-btn" data-mode="portfolio-viewer" title="Adobe Stock Portfolio Viewer">
-      <i class="fa-solid fa-images"></i>
-    </button>
-  </aside>
-
-  <div class="app-content-area">
-    <!-- ==========================================================================
-         MAIN CONTENT CONTAINER
-         ========================================================================== -->
-    <div class="main-wrapper">
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== -->
+  <div class="main-wrapper">
     
     <!-- --- LEFT SIDEBAR PANEL --- -->
     <aside class="sidebar">
       
-      <!-- Collapsible Image Prompt Customization -->
-      <div class="panel-section" id="image-prompt-custom-panel" style="display: none;">
-        <div class="panel-header" onclick="togglePanel('image-prompt-custom-panel')">
-          <span class="panel-title">Prompt Settings</span>
+      <!-- Collapsible Mode Selection -->
+      <div class="panel-section" id="mode-panel">
+        <div class="panel-header" onclick="togglePanel('mode-panel')">
+          <span class="panel-title">Mode Selection</span>
           <i class="fa-solid fa-chevron-down panel-toggle-icon"></i>
         </div>
         <div class="panel-content">
-          <div class="input-container" style="width: 100%;">
-            <label class="input-label" for="reverse-prompt-custom-instructions" style="font-size: 11px; font-weight:700; color:var(--color-cyan-dim); text-transform:uppercase; margin-bottom: 8px; display: block;">Your Custom prompt here:</label>
-            <textarea id="reverse-prompt-custom-instructions" class="sidebar-prompt-textarea" placeholder="e.g. Ensure the prompt describes an oil painting style..." style="min-height: 150px; font-size: 13px;"></textarea>
+          <div class="mode-container">
+            <button class="mode-btn active" data-mode="metadata">
+              <i class="fa-solid fa-tags"></i>
+              <span>Metadata</span>
+            </button>
+            <button class="mode-btn" data-mode="image-to-prompt">
+              <i class="fa-regular fa-image"></i>
+              <span>Image to Prompt</span>
+            </button>
           </div>
-          <button class="workspace-btn copy-all" id="reverse-prompt-submit-btn" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 8px; justify-content: center; margin-top: 10px;">
-            <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 8px;"></i> Generate
-          </button>
-        </div>
-      </div>
-
-      <!-- Collapsible Image to SVG Customization -->
-      <div class="panel-section" id="image-to-svg-custom-panel" style="display: none;">
-        <div class="panel-header" onclick="togglePanel('image-to-svg-custom-panel')">
-          <span class="panel-title">SVG Settings</span>
-          <i class="fa-solid fa-chevron-down panel-toggle-icon"></i>
-        </div>
-        <div class="panel-content">
-          <div class="input-container" style="width: 100%;">
-            <label class="input-label" for="svg-custom-instructions" style="font-size: 11px; font-weight:700; color:var(--color-cyan-dim); text-transform:uppercase; margin-bottom: 8px; display: block;">Custom instructions:</label>
-            <textarea id="svg-custom-instructions" class="sidebar-prompt-textarea" placeholder="e.g. Ensure all shapes are editable, use native <text> elements, recreate the complex gradients..." style="min-height: 150px; font-size: 13px;"></textarea>
-          </div>
-          <button class="workspace-btn copy-all" id="svg-submit-btn" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 8px; justify-content: center; margin-top: 10px;">
-            <i class="fa-solid fa-bezier-curve" style="margin-right: 8px;"></i> Generate SVG
-          </button>
         </div>
       </div>
       
@@ -176,20 +143,6 @@
             </div>
             <input type="range" class="custom-range" id="max-desc-range" min="20" max="60" value="32">
           </div>
-          
-          <!-- Action Buttons Moved from Workspace -->
-          <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-            <button class="workspace-btn copy-all" id="metadata-generate-btn" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 8px; justify-content: center;">
-              <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 8px;"></i> Generate Metadata
-            </button>
-            <button class="workspace-btn export-all" id="metadata-export-btn" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; justify-content: center; border: 1px solid var(--border-glass);">
-              <i class="fa-solid fa-file-csv" style="margin-right: 8px;"></i> Export All CSV
-            </button>
-            <button class="workspace-btn" id="metadata-clear-btn" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; justify-content: center; color: #ff4d4d; border: 1px solid rgba(255, 77, 77, 0.2);">
-              <i class="fa-solid fa-trash-can" style="margin-right: 8px;"></i> Clear All
-            </button>
-          </div>
-
         </div>
       </div>
       
@@ -277,91 +230,219 @@
         </div>
       </section>
 
+      <!-- --- LANDING FILE DROPZONE --- -->
+      <section class="upload-card" id="dropzone">
+        <input type="file" id="file-input" multiple accept="image/*,video/*,.eps,.ai,.svg">
+        <div class="upload-inner" onclick="document.getElementById('file-input').click()">
+          <div class="upload-icon-container">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          </div>
+          <h2 class="upload-title">Choose Files</h2>
+          <div class="upload-file-types">
+            <span class="type-pill images">Images</span>
+            <span class="type-pill vectors">Vectors</span>
+            <span class="type-pill videos">Videos</span>
+          </div>
+          <div class="privacy-notice">
+            <i class="fa-solid fa-lock"></i>
+            <span>Privacy Statement: We process your files directly on your device. All data is automatically removed after metadata extraction.</span>
+          </div>
+          <div class="upload-footer-text">Process Unlimited images in a Single Action</div>
+        </div>
+      </section>
+
       <!-- ==========================================================================
-           METADATA GENERATOR (UNIFIED LAYOUT)
+           BULK UPLOADED IMAGES GRID PREVIEW (User 2nd Screenshot Inspired)
            ========================================================================== -->
-      <section class="image-gen-container" id="metadata-unified-section">
-        <div class="bulk-preview-header" style="text-align: left;">
-          <h2 class="bulk-preview-title"><i class="fa-solid fa-tags"></i> Stock Metadata Generator</h2>
-          <p class="bulk-preview-subtitle">Upload your images/vectors to generate highly optimized titles, descriptions, and keywords for stock agencies.</p>
+      <section class="bulk-preview-container" id="bulk-preview-section">
+        <div class="bulk-preview-header">
+          <h2 class="bulk-preview-title">Uploaded Assets Gallery</h2>
+          <p class="bulk-preview-subtitle">Verify your uploaded items in the grid below, then click "Generate" to construct optimized metadata in bulk.</p>
         </div>
         
-        <div class="image-gen-unified-layout" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
-          <!-- Upload Dropzone -->
-          <div class="input-container">
-            <div class="upload-area" id="metadata-upload-area" style="min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--border-glass); border-radius: 12px; cursor: pointer; background: var(--bg-card); transition: all 0.2s ease; padding: 16px;">
-              <input type="file" id="metadata-file-input" accept="image/jpeg, image/png, image/webp, .eps, .ai, .svg" multiple style="display: none;">
-              <div id="metadata-upload-content" style="text-align: center; pointer-events: none;">
-                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: var(--color-cyan-dim); margin-bottom: 8px;"></i>
-                <h3 style="font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px;">Click or Drag Images/Vectors Here</h3>
-                <p style="font-size: 12px; color: var(--text-muted);">Process unlimited files in a single action</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Image Rows Container -->
-          <div id="metadata-preview-list" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
-            <!-- Dynamic rows will be injected here by JS -->
-          </div>
-          
+        <!-- Grid of Square Thumbnails -->
+        <div class="bulk-grid" id="bulk-grid-container">
+          <!-- Dynamically populated square cards -->
+        </div>
+        
+        <!-- Action Row -->
+        <div class="bulk-action-row">
+          <button class="bulk-generate-btn" id="bulk-generate-btn">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Stock Metadata
+          </button>
         </div>
       </section>
 
       <!-- ==========================================================================
-           REVERSE PROMPT GENERATOR SECTION
+           AI IMAGE GENERATOR PANEL (IMAGE-TO-PROMPT & TEXT-TO-IMAGE CREATOR)
            ========================================================================== -->
       <section class="image-gen-container" id="image-gen-section" style="display: none;">
-        <div class="bulk-preview-header" style="text-align: left;">
-          <h2 class="bulk-preview-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Reverse Prompt Generator</h2>
-          <p class="bulk-preview-subtitle">Upload an image to reverse-engineer its prompt.</p>
+        <div class="bulk-preview-header">
+          <h2 class="bulk-preview-title"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Stock Image Generator</h2>
+          <p class="bulk-preview-subtitle">Enter a text prompt to generate premium vector illustrations, high-quality photos, or stock graphics using DALL-E 3 or our high-speed AI engine.</p>
         </div>
-        <div class="image-gen-unified-layout" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
-          <div class="input-container">
-            <div class="upload-area" id="reverse-prompt-upload-area" style="min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--border-glass); border-radius: 12px; cursor: pointer; background: var(--bg-card); transition: all 0.2s ease; padding: 16px;" onclick="document.getElementById('reverse-prompt-file-input').click()">
-              <input type="file" id="reverse-prompt-file-input" accept="image/jpeg, image/png, image/webp" style="display: none;">
-              <div style="text-align: center; pointer-events: none;">
-                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: var(--color-cyan-dim); margin-bottom: 8px;"></i>
-                <h3 style="font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px;">Upload Image for Prompt Generation</h3>
+        
+        <div class="image-gen-layout">
+          <!-- Left Panel: Prompt Details -->
+          <div class="image-gen-form">
+            <div class="input-container">
+              <label class="input-label" for="image-gen-prompt" style="font-size: 11px; font-weight:700; color:var(--color-cyan-dim); text-transform:uppercase;">Describe the image you want to generate:</label>
+              <textarea id="image-gen-prompt" class="text-input-field" placeholder="e.g. Vintage sewing machine, tailor sewing vector icon, flat minimalist design, isolated on white background..." style="min-height: 100px;"></textarea>
+            </div>
+            
+            <div class="form-row" style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start;">
+              <div class="input-container">
+                <label class="input-label" for="image-gen-style" style="font-size: 11px; font-weight:700; color:var(--color-cyan-dim); text-transform:uppercase;">Visual Style:</label>
+                <select id="image-gen-style" class="text-input-field" style="background: var(--bg-card); cursor: pointer; padding: 10px 12px; border: var(--border-glass); border-radius: 8px; color: var(--text-main); font-size:13px;">
+                  <option value="vector-icon">Flat Vector Icon Set</option>
+                  <option value="line-art">Minimalist Line Art</option>
+                  <option value="silhouette">Contrast Silhouette</option>
+                  <option value="photo">Photorealistic Stock Photo</option>
+                  <option value="3d-render">Sleek 3D Studio Render</option>
+                </select>
+              </div>
+              <div class="input-container">
+                <label class="input-label" for="image-gen-aspect" style="font-size: 11px; font-weight:700; color:var(--color-cyan-dim); text-transform:uppercase;">Aspect Ratio:</label>
+                <select id="image-gen-aspect" class="text-input-field" style="background: var(--bg-card); cursor: pointer; padding: 10px 12px; border: var(--border-glass); border-radius: 8px; color: var(--text-main); font-size:13px;">
+                  <option value="1:1">Square (1:1)</option>
+                  <option value="16:9">Landscape (16:9)</option>
+                  <option value="9:16">Portrait (9:16)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="workspace-controls" style="margin-top: 16px; border-top: none; padding-top: 0;">
+              <button class="workspace-btn copy-all" id="image-gen-submit-btn" style="flex: 1; padding: 14px 20px; justify-content: center; font-size: 14px; font-weight: 700;">
+                <i class="fa-solid fa-play"></i> Generate Stock Image
+              </button>
+            </div>
+          </div>
+          
+          <!-- Right Panel: Output Preview Card -->
+          <div class="image-gen-preview">
+            <div class="image-gen-result-card" id="image-gen-result-card">
+              <div class="image-gen-empty-state" id="image-gen-empty-state">
+                <i class="fa-regular fa-image" style="font-size: 48px; color: var(--color-cyan-dim); margin-bottom: 12px;"></i>
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Your generated AI image will appear here</span>
+              </div>
+              
+              <div class="image-gen-output-container" id="image-gen-output-container" style="display: none;">
+                <img id="image-gen-img-element" class="image-gen-img" src="" alt="AI Output">
+                <div class="image-gen-actions" style="margin-top: 12px; display: flex; gap:10px;">
+                  <button class="workspace-btn copy-all" id="image-gen-extract-btn" style="background: var(--color-cyan-dim); color: #0c1527; font-weight: 700;">
+                    <i class="fa-solid fa-tags"></i> Extract Stock SEO
+                  </button>
+                  <button class="workspace-btn" id="image-gen-download-btn" style="font-weight: 700;">
+                    <i class="fa-solid fa-download"></i> Download Image
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          <div id="reverse-prompt-preview" style="text-align: center;"></div>
         </div>
       </section>
 
       <!-- ==========================================================================
-           IMAGE TO SVG CONVERTER SECTION
+           INTERACTIVE EDITING WORKSPACE (SIMPLIFIED & CLUTTER-FREE)
            ========================================================================== -->
-      <section class="image-gen-container" id="image-to-svg-section" style="display: none;">
-        <div class="bulk-preview-header" style="text-align: left;">
-          <h2 class="bulk-preview-title"><i class="fa-solid fa-bezier-curve"></i> Image to SVG Converter</h2>
-          <p class="bulk-preview-subtitle">Upload a raster image to convert it into a scalable vector graphic.</p>
+      <section class="workspace-container" id="workspace">
+        
+        <!-- Left: Uploaded Files Queue Sidebar -->
+        <div class="queue-sidebar">
+          <div class="queue-sidebar-header">
+            <span>Files Queue</span>
+            <span class="badge" id="queue-count">0</span>
+          </div>
+          <div class="queue-list" id="queue-list">
+            <!-- Dynamically populated queue list items -->
+          </div>
+          <div class="queue-actions">
+            <button class="queue-action-btn regen-failed-btn" id="regen-failed-btn" onclick="regenFailedItems()" style="display:none;">
+              <i class="fa-solid fa-rotate-right"></i> Retry Failed
+            </button>
+            <button class="queue-action-btn export-all" onclick="exportBulkCSV()">
+              <i class="fa-solid fa-file-csv"></i> Export All CSV
+            </button>
+            <button class="queue-action-btn" onclick="clearAllFiles()">
+              <i class="fa-solid fa-trash-can"></i> Clear All Queue
+            </button>
+            <button class="queue-action-btn" onclick="document.getElementById('file-input').click()">
+              <i class="fa-solid fa-plus"></i> Add More Files
+            </button>
+          </div>
         </div>
-        <div class="image-gen-unified-layout" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
-          <div class="input-container">
-            <div class="upload-area" id="image-to-svg-upload-area" style="min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--border-glass); border-radius: 12px; cursor: pointer; background: var(--bg-card); transition: all 0.2s ease; padding: 16px;" onclick="document.getElementById('image-to-svg-file-input').click()">
-              <input type="file" id="image-to-svg-file-input" accept="image/jpeg, image/png, image/webp" style="display: none;">
-              <div style="text-align: center; pointer-events: none;">
-                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: var(--color-cyan-dim); margin-bottom: 8px;"></i>
-                <h3 style="font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px;">Upload Image to Convert</h3>
-              </div>
+        
+        <!-- Right: Current Media Edit Panel -->
+        <div class="editor-workspace">
+          
+          <!-- Column A: Media Preview (CLUTTER-FREE: No EXIF card!) -->
+          <div class="preview-panel">
+            <div class="preview-container" id="preview-container">
+              <!-- Dynamically shows image preview, video preview, or icon vector -->
             </div>
           </div>
-          <div id="image-to-svg-preview" style="text-align: center;"></div>
-        </div>
-      </section>
-
-      <!-- ==========================================================================
-           PORTFOLIO VIEWER SECTION
-           ========================================================================== -->
-      <section class="image-gen-container" id="portfolio-viewer-section" style="display: none;">
-        <div class="bulk-preview-header" style="text-align: left;">
-          <h2 class="bulk-preview-title"><i class="fa-regular fa-folder-open"></i> Portfolio Viewer</h2>
-          <p class="bulk-preview-subtitle">View and manage your generated portfolio.</p>
-        </div>
-        <div style="text-align: center; padding: 40px;">
-          <i class="fa-regular fa-folder-open" style="font-size: 48px; color: var(--color-cyan-dim); margin-bottom: 20px;"></i>
-          <h3>Portfolio Viewer (Coming Soon)</h3>
+          
+          <!-- Column B: Edit Metadata Fields (NO Custom prompt context box!) -->
+          <div class="edit-panel">
+            
+            <!-- Title -->
+            <div class="input-container">
+              <div class="input-label-row">
+                <span class="input-label">Title</span>
+                <span class="input-counter" id="title-counter">0 words</span>
+              </div>
+              <input type="text" id="workspace-title" class="text-input-field" placeholder="Enter stock asset title...">
+            </div>
+            
+            <!-- Description -->
+            <div class="input-container">
+              <div class="input-label-row">
+                <span class="input-label">Description</span>
+                <span class="input-counter" id="desc-counter">0 words</span>
+              </div>
+              <textarea id="workspace-desc" class="text-input-field" placeholder="Enter stock asset description..."></textarea>
+            </div>
+            
+            <!-- Category -->
+            <div class="input-container">
+              <div class="input-label-row">
+                <span class="input-label">Category</span>
+              </div>
+              <input type="text" id="workspace-category" class="text-input-field" placeholder="e.g. Business, Animals, Technology, Backgrounds...">
+            </div>
+            
+            <!-- Keywords Tag Editor -->
+            <div class="input-container">
+              <div class="input-label-row">
+                <span class="input-label">Keywords / Tags</span>
+                <span class="input-counter" id="keys-counter">0 tags</span>
+              </div>
+              <div class="tags-wrapper" id="tags-wrapper">
+                <!-- Tag chips render here dynamically -->
+                <input type="text" id="tag-input" class="tag-input" placeholder="Type keyword and press Enter or comma...">
+              </div>
+            </div>
+            
+            <!-- Editing Panel Operations Row -->
+            <div class="workspace-controls">
+              <button class="workspace-btn" onclick="copyToClipboard('title')">
+                <i class="fa-regular fa-copy"></i> Copy Title
+              </button>
+              <button class="workspace-btn" onclick="copyToClipboard('desc')">
+                <i class="fa-regular fa-copy"></i> Copy Desc
+              </button>
+              <button class="workspace-btn" onclick="copyToClipboard('keys')">
+                <i class="fa-regular fa-copy"></i> Copy Keywords
+              </button>
+              <button class="workspace-btn copy-all" onclick="copyAllMetadata()">
+                <i class="fa-solid fa-copy"></i> Copy All Fields
+              </button>
+              <button class="workspace-btn" onclick="regenerateCurrentMetadata()">
+                <i class="fa-solid fa-arrows-rotate"></i> Re-generate AI
+              </button>
+            </div>
+          </div>
+          
         </div>
       </section>
 
@@ -414,7 +495,6 @@
           <button class="api-provider-tab" data-provider="openai">OpenAI</button>
           <button class="api-provider-tab" data-provider="groq">Groq</button>
           <button class="api-provider-tab" data-provider="openrouter">OpenRouter</button>
-          <button class="api-provider-tab" data-provider="adobestock" style="color:var(--color-cyan);">Adobe Stock</button>
           <button class="api-provider-tab" data-provider="ollama" style="color:var(--success)">Local (Ollama)</button>
         </div>
         
@@ -439,9 +519,9 @@
             </div>
             <!-- Custom Model field — shows for all providers -->
             <div id="custom-model-row" style="margin-top: 18px;">
-              <label class="form-label" for="api-custom-model" id="custom-model-label">🤖 Custom Model (Required):</label>
-              <input type="text" id="api-custom-model" class="form-input-text" placeholder="e.g., google/gemini-2.5-flash" style="margin-top: 6px;">
-              <p style="font-size: 11px; color: var(--text-dark); margin-top: 5px;" id="custom-model-hint">Enter the model you want to use (e.g., <strong>google/gemini-2.5-flash</strong> or <strong>moonshotai/kimi-k2.6:free</strong>).</p>
+              <label class="form-label" for="api-custom-model" id="custom-model-label">🤖 Custom Model (Optional):</label>
+              <input type="text" id="api-custom-model" class="form-input-text" placeholder="e.g., google/gemini-2.0-flash-exp:free" style="margin-top: 6px;">
+              <p style="font-size: 11px; color: var(--text-dark); margin-top: 5px;" id="custom-model-hint">Leave empty to use default model. For OpenRouter free models use: <strong>google/gemini-2.0-flash-exp:free</strong></p>
             </div>
 
           </div>
@@ -488,15 +568,12 @@
     </div>
   </div>
 
-  </div> <!-- End app-content-area -->
-</div> <!-- End app-layout -->
-
   <!-- ==========================================================================
        TOAST NOTIFICATION ALERTS
        ========================================================================== -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- Custom JS Application Logic -->
-  <script src="app.js?v=32"></script>
+  <!-- Custom Core JS App Logic -->
+  <script src="app.js"></script>
 </body>
 </html>

@@ -2900,9 +2900,8 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 function refreshMetadataPanelsVisibility() {
-  const dropzone = document.getElementById('dropzone');
-  const bulkPreview = document.getElementById('bulk-preview-section');
-  const workspace = document.getElementById('workspace');
+  console.log("refreshMetadataPanelsVisibility called. activeMode:", activeMode);
+  const metadataUnified = document.getElementById('metadata-unified-section');
   const imageGen = document.getElementById('image-gen-section');
   const sidebar = document.querySelector('.sidebar');
   const metadataCustomPanel = document.getElementById('custom-panel');
@@ -2917,10 +2916,12 @@ function refreshMetadataPanelsVisibility() {
   const platformsSection = document.querySelector('.platforms-section');
 
   if (activeMode === 'image-to-prompt') {
-    if (dropzone) dropzone.style.display = 'none';
-    if (bulkPreview) bulkPreview.classList.remove('active');
-    if (workspace) workspace.classList.remove('active');
-    if (imageGen) imageGen.style.display = 'block';
+    console.log("Switching to image-to-prompt. imageGen element:", imageGen);
+    if (metadataUnified) metadataUnified.style.display = 'none';
+    if (imageGen) {
+      imageGen.style.display = 'block';
+      console.log("Set imageGen style to block");
+    }
     if (imageSvg) imageSvg.style.display = 'none';
     if (portfolioViewer) portfolioViewer.style.display = 'none';
     if (platformsSection) platformsSection.style.display = 'none';
@@ -2930,9 +2931,7 @@ function refreshMetadataPanelsVisibility() {
     if (imagePromptCustomPanel) imagePromptCustomPanel.style.display = 'flex';
     if (svgCustomPanel) svgCustomPanel.style.display = 'none';
   } else if (activeMode === 'image-to-svg') {
-    if (dropzone) dropzone.style.display = 'none';
-    if (bulkPreview) bulkPreview.classList.remove('active');
-    if (workspace) workspace.classList.remove('active');
+    if (metadataUnified) metadataUnified.style.display = 'none';
     if (imageGen) imageGen.style.display = 'none';
     if (imageSvg) imageSvg.style.display = 'block';
     if (portfolioViewer) portfolioViewer.style.display = 'none';
@@ -2943,15 +2942,12 @@ function refreshMetadataPanelsVisibility() {
     if (imagePromptCustomPanel) imagePromptCustomPanel.style.display = 'none';
     if (svgCustomPanel) svgCustomPanel.style.display = 'flex';
   } else if (activeMode === 'portfolio-viewer') {
-    if (dropzone) dropzone.style.display = 'none';
-    if (bulkPreview) bulkPreview.classList.remove('active');
-    if (workspace) workspace.classList.remove('active');
+    if (metadataUnified) metadataUnified.style.display = 'none';
     if (imageGen) imageGen.style.display = 'none';
     if (imageSvg) imageSvg.style.display = 'none';
     if (portfolioViewer) portfolioViewer.style.display = 'block';
     if (platformsSection) platformsSection.style.display = 'none';
     
-    // Hide the entire sidebar since this is a separate page functionality
     if (sidebar) sidebar.style.display = 'none';
   } else {
     if (imageGen) imageGen.style.display = 'none';
@@ -2964,19 +2960,7 @@ function refreshMetadataPanelsVisibility() {
     if (imagePromptCustomPanel) imagePromptCustomPanel.style.display = 'none';
     if (svgCustomPanel) svgCustomPanel.style.display = 'none';
     
-    if (fileQueue.length === 0) {
-      if (dropzone) dropzone.style.display = 'block';
-      if (bulkPreview) bulkPreview.classList.remove('active');
-      if (workspace) workspace.classList.remove('active');
-    } else if (activeQueueIndex === -1) {
-      if (dropzone) dropzone.style.display = 'none';
-      if (bulkPreview) bulkPreview.classList.add('active');
-      if (workspace) workspace.classList.remove('active');
-    } else {
-      if (dropzone) dropzone.style.display = 'none';
-      if (bulkPreview) bulkPreview.classList.remove('active');
-      if (workspace) workspace.classList.add('active');
-    }
+    if (metadataUnified) metadataUnified.style.display = 'block';
   }
 }
 
