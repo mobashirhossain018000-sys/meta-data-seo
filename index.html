@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockMeta Pro - AI Stock Metadata Generator & Extractor</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css?v=13">
+  
+  <!-- EXIF Library for Image Metadata Extraction -->
+  <script src="https://cdn.jsdelivr.net/npm/exif-js?v=1"></script>
+</head>
+<body>
+  <!-- ==========================================================================
+       TOP NAVBAR / HEADER
+       ========================================================================== -->
+  <header class="header">
+    <div class="header-left">
+      <a href="#" class="logo-container">
+        <div class="logo-icon">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+        <div class="logo-text">StockMeta <span>Pro</span></div>
+      </a>
+      <div class="nav-actions">
+        <button class="nav-icon-btn" title="Toggle Sidebar"><i class="fa-solid fa-bars-staggered"></i></button>
+        <button class="nav-icon-btn" title="Sync Status"><i class="fa-solid fa-arrows-rotate"></i></button>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <button class="nav-link-btn tutorial"><i class="fa-solid fa-graduation-cap"></i> Tutorial</button>
+      <button class="nav-link-btn contact">Contact</button>
+      <button class="nav-link-btn pricing">Pricing</button>
+      
+      <!-- Profile Initials Badge (m) -->
+      <div class="profile-avatar" id="profile-btn">m</div>
+      
+      <!-- Profile Dropdown Menu -->
+      <div class="profile-menu" id="profile-menu">
+        <div class="profile-menu-header">
+          <div class="profile-menu-status">Signed in as:</div>
+          <div class="profile-menu-email" id="profile-menu-email">Guest User</div>
+        </div>
+        <button class="profile-menu-btn" id="open-api-manager-btn">
+          <i class="fa-solid fa-key"></i> API Keys Manager
+        </button>
+        <button class="profile-menu-btn logout" id="logout-btn" style="display: none;">
+          <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </button>
+        <button class="profile-menu-btn" id="login-trigger-btn">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign in with Google
+        </button>
+      </div>
+    </div>
+  </header>
+
+<div class="app-layout">
+  <!-- NEW LEFT SIDE NAVIGATION RAIL -->
+  <aside class="side-nav-rail">
+    <button class="nav-rail-btn active" data-mode="metadata" title="Metadata Generator">
+      <i class="fa-solid fa-tags"></i>
+    </button>
+    <button class="nav-rail-btn" data-mode="image-to-prompt" title="Image to Prompts">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </button>
+    <!-- SVG Generator -->
+    <button class="nav-rail-btn" data-mode="image-to-svg" title="Image to SVG Generator">
+      <i class="fa-solid fa-bezier-curve"></i>
+    </button>
+    <button class="nav-rail-btn" data-mode="portfolio-viewer" title="Adobe Stock Portfolio Viewer">
+      <i class="fa-solid fa-images"></i>
+    </button>
+  </aside>
+
+  <div class="app-content-area">
+    <!-- ==========================================================================
+         MAIN CONTENT CONTAINER
+         ========================================================================== -->
+    <div class="main-wrapper">
+    
+    <!-- --- LEFT SIDEBAR PANEL --- -->
+    <aside class="sidebar">
+      
+      <!-- Collapsible Image Prompt Customization -->
+      <div class="panel-section" id="image-prompt-custom-panel" style="display: none;">
+        <div class="panel-header" onclick="togglePanel('image-prompt-custom-panel')">
+          <span class="panel-title">Prompt Settings</span>
+          <i class="fa-solid fa-chevron-down panel-toggle-icon"></i>
+        </div>
+        <div class="panel-content">
+          <div class="input-container" style="width: 100%;">
+            <label class="input-label" for="reverse-prompt-custom-instructions" style="font-size: 11px; font-weight:700; color:var(--color-cyan-dim); text-transform:uppercase; margin-bottom: 8px; display: block;">Your Custom prompt here:</label>
+            <textarea id="reverse-prompt-custom-instructions" class="sidebar-prompt-textarea" placeholder="e.g. Ensure the prompt describes an oil painting style..." style="min-height: 150px; font-size: 13px;"></textarea>
+          </div>
+          <button class="workspace-btn copy-all" id="reverse-prompt-submit-btn" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 8px; justify-content: center; margin-top: 10px;">
+            <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 8px;"></i> Generate
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Image to SVG Customization -->
+      <div class="panel-section" id="image-to-svg-custom-panel" style="display: none;">
+        <div class="panel-header" onclick="togglePanel('image-to-svg-custom-panel')">
+          <span class="panel-title">SVG Settings</span>
+          <i class="fa-solid fa-chevron-down panel-toggle-icon"></i>
+        </div>
+        <div class="panel-content">
+          <div class="input-container" style="width: 100%;">
+            <label class="input-label" for="svg-custom-instructions" style="font-size: 11px; font-weight:700; color:var(--color-cyan-dim); text-transform:uppercase; margin-bottom: 8px; display: block;">Custom instructions:</label>
+            <textarea id="svg-custom-instructions" class="sidebar-prompt-textarea" placeholder="e.g. Ensure all shapes are editable, use native <text> elements, recreate the complex gradients..." style="min-height: 150px; font-size: 13px;"></textarea>
+          </div>
+          <button class="workspace-btn copy-all" id="svg-submit-btn" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 8px; justify-content: center; margin-top: 10px;">
+            <i class="fa-solid fa-bezier-curve" style="margin-right: 8px;"></i> Generate SVG
+          </button>
+        </div>
+      </div>
+      
+      <!-- Collapsible Metadata Customization -->
+      <div class="panel-section" id="custom-panel">
+        <div class="panel-header" onclick="togglePanel('custom-panel')">
+          <span class="panel-title">Metadata Customization</span>
+          <i class="fa-solid fa-chevron-down panel-toggle-icon"></i>
+        </div>
+        <div class="panel-content">
+          <!-- Slider 1 -->
+          <div class="slider-group">
+            <div class="slider-label-row">
+              <span class="slider-name">Min Title Words</span>
+              <span class="slider-value" id="min-title-val">10</span>
+            </div>
+            <input type="range" class="custom-range" id="min-title-range" min="3" max="20" value="10">
+          </div>
+          <!-- Slider 2 -->
+          <div class="slider-group">
+            <div class="slider-label-row">
+              <span class="slider-name">Max Title Words</span>
+              <span class="slider-value" id="max-title-val">15</span>
+            </div>
+            <input type="range" class="custom-range" id="max-title-range" min="10" max="30" value="15">
+          </div>
+          <!-- Slider 3 -->
+          <div class="slider-group">
+            <div class="slider-label-row">
+              <span class="slider-name">Min Keywords</span>
+              <span class="slider-value" id="min-keys-val">25</span>
+            </div>
+            <input type="range" class="custom-range" id="min-keys-range" min="5" max="35" value="25">
+          </div>
+          <!-- Slider 4 -->
+          <div class="slider-group">
+            <div class="slider-label-row">
+              <span class="slider-name">Max Keywords</span>
+              <span class="slider-value" id="max-keys-val">35</span>
+            </div>
+            <input type="range" class="custom-range" id="max-keys-range" min="20" max="50" value="35">
+          </div>
+          <!-- Slider 5 -->
+          <div class="slider-group">
+            <div class="slider-label-row">
+              <span class="slider-name">Min Description Words</span>
+              <span class="slider-value" id="min-desc-val">18</span>
+            </div>
+            <input type="range" class="custom-range" id="min-desc-range" min="5" max="30" value="18">
+          </div>
+          <!-- Slider 6 -->
+          <div class="slider-group">
+            <div class="slider-label-row">
+              <span class="slider-name">Max Description Words</span>
+              <span class="slider-value" id="max-desc-val">32</span>
+            </div>
+            <input type="range" class="custom-range" id="max-desc-range" min="20" max="60" value="32">
+          </div>
+          
+          <!-- Action Buttons Moved from Workspace -->
+          <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+            <button class="workspace-btn copy-all" id="metadata-generate-btn" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 8px; justify-content: center;">
+              <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 8px;"></i> Generate Metadata
+            </button>
+            <button class="workspace-btn export-all" id="metadata-export-btn" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; justify-content: center; border: 1px solid var(--border-glass);">
+              <i class="fa-solid fa-file-csv" style="margin-right: 8px;"></i> Export All CSV
+            </button>
+            <button class="workspace-btn" id="metadata-clear-btn" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; justify-content: center; color: #ff4d4d; border: 1px solid rgba(255, 77, 77, 0.2);">
+              <i class="fa-solid fa-trash-can" style="margin-right: 8px;"></i> Clear All
+            </button>
+          </div>
+
+        </div>
+      </div>
+      
+      <!-- Collapsible SETTINGS Toggles -->
+      <div class="panel-section" id="settings-panel">
+        <div class="panel-header" onclick="togglePanel('settings-panel')">
+          <span class="panel-title"><i class="fa-solid fa-gear"></i> Settings</span>
+          <i class="fa-solid fa-chevron-down panel-toggle-icon"></i>
+        </div>
+        <div class="panel-content">
+          <!-- Keyword Generation Styles -->
+          <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+            
+            <div class="toggle-group pink-toggle" style="flex-direction: column; align-items: stretch; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span class="toggle-label" style="font-size: 14px;">Single-Word Keywords</span>
+                <input type="checkbox" id="kw-single-switch" class="switch-input keyword-style-switch" checked>
+                <label for="kw-single-switch" class="switch-label"></label>
+              </div>
+              <span style="font-size: 11px; color: var(--text-dark); line-height: 1.3;">Generate individual words as keywords (e.g., "sunset", "mountain", "ocean")</span>
+            </div>
+
+            <div class="toggle-group pink-toggle" style="flex-direction: column; align-items: stretch; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span class="toggle-label" style="font-size: 14px;">Double-Word Keywords</span>
+                <input type="checkbox" id="kw-double-switch" class="switch-input keyword-style-switch">
+                <label for="kw-double-switch" class="switch-label"></label>
+              </div>
+              <span style="font-size: 11px; color: var(--text-dark); line-height: 1.3;">Generate two-word phrases as keywords (e.g., "golden sunset", "snow mountain")</span>
+            </div>
+
+            <div class="toggle-group pink-toggle" style="flex-direction: column; align-items: stretch; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span class="toggle-label" style="font-size: 14px;">Mixed Keywords</span>
+                <input type="checkbox" id="kw-mixed-switch" class="switch-input keyword-style-switch">
+                <label for="kw-mixed-switch" class="switch-label"></label>
+              </div>
+              <span style="font-size: 11px; color: var(--text-dark); line-height: 1.3;">Generate a combination of single words and phrases for better coverage</span>
+            </div>
+
+          </div>
+          <!-- Toggle 2 -->
+          <div class="toggle-group">
+            <span class="toggle-label">Silhouette</span>
+            <input type="checkbox" id="silhouette-switch" class="switch-input" checked>
+            <label for="silhouette-switch" class="switch-label"></label>
+          </div>
+          <!-- Toggle 3 (User Latest Screenshot: Contains Textarea underneath!) -->
+          <div class="toggle-group pink-toggle" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <span class="toggle-label">Custom Prompt</span>
+              <input type="checkbox" id="custom-prompt-switch" class="switch-input" checked>
+              <label for="custom-prompt-switch" class="switch-label"></label>
+            </div>
+            <div id="sidebar-custom-prompt-container" style="display: none; width: 100%;">
+              <textarea id="sidebar-custom-prompt" class="sidebar-prompt-textarea" placeholder="Enter your custom prompt here..."></textarea>
+            </div>
+          </div>
+          <!-- Toggle 4: Transparent Background Switch (User Latest Screenshot) -->
+          <div class="toggle-group">
+            <span class="toggle-label">Transparent Background</span>
+            <input type="checkbox" id="transparent-bg-switch" class="switch-input" checked>
+            <label for="transparent-bg-switch" class="switch-label"></label>
+          </div>
+        </div>
+      </div>
+      
+    </aside>
+
+    <!-- --- MAIN AREA --- -->
+    <main class="main-content">
+      
+      <!-- --- PLATFORMS SELECTION --- -->
+      <section class="platforms-section">
+        <div class="platforms-title">Platforms</div>
+        <div class="platforms-list">
+          <div class="platform-pill" data-platform="general"><i class="fa-regular fa-circle"></i> General</div>
+          <div class="platform-pill" data-platform="adobestock"><i class="fa-brands fa-adobe"></i> AdobeStock</div>
+          <div class="platform-pill" data-platform="magnific"><i class="fa-solid fa-crown"></i> Magnific</div>
+          <div class="platform-pill" data-platform="shutterstock"><i class="fa-solid fa-camera"></i> Shutterstock</div>
+          <div class="platform-pill active" data-platform="vecteezy"><i class="fa-solid fa-diamond"></i> Vecteezy</div>
+          <div class="platform-pill" data-platform="depositphotos"><i class="fa-regular fa-gem"></i> Depositphotos</div>
+          <div class="platform-pill" data-platform="123rf"><i class="fa-solid fa-box"></i> 123RF</div>
+          <div class="platform-pill" data-platform="dreamstime"><i class="fa-solid fa-wind"></i> Dreamstime</div>
+        </div>
+      </section>
+
+      <!-- ==========================================================================
+           METADATA GENERATOR (UNIFIED LAYOUT)
+           ========================================================================== -->
+      <section class="image-gen-container" id="metadata-unified-section">
+        <div class="bulk-preview-header" style="text-align: left;">
+          <h2 class="bulk-preview-title"><i class="fa-solid fa-tags"></i> Stock Metadata Generator</h2>
+          <p class="bulk-preview-subtitle">Upload your images/vectors to generate highly optimized titles, descriptions, and keywords for stock agencies.</p>
+        </div>
+        
+        <div class="image-gen-unified-layout" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+          <!-- Upload Dropzone -->
+          <div class="input-container">
+            <div class="upload-area" id="metadata-upload-area" style="min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--border-glass); border-radius: 12px; cursor: pointer; background: var(--bg-card); transition: all 0.2s ease; padding: 16px;">
+              <input type="file" id="metadata-file-input" accept="image/jpeg, image/png, image/webp, .eps, .ai, .svg" multiple style="display: none;">
+              <div id="metadata-upload-content" style="text-align: center; pointer-events: none;">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 28px; color: var(--color-cyan-dim); margin-bottom: 8px;"></i>
+                <h3 style="font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px;">Click or Drag Images/Vectors Here</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">Process unlimited files in a single action</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Image Rows Container -->
+          <div id="metadata-preview-list" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+            <!-- Dynamic rows will be injected here by JS -->
+          </div>
+          
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: SIMULATED GOOGLE AUTHENTICATION
+       ========================================================================== -->
+  <div class="modal-overlay" id="google-login-modal">
+    <div class="modal-card google-modal">
+      <div class="modal-header">
+        <span class="modal-title">Sign In with Google</span>
+        <button class="modal-close-btn" onclick="closeModal('google-login-modal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="google-auth-content">
+          <div class="google-brand-logo"><i class="fa-brands fa-google"></i></div>
+          <h3 class="google-auth-title">Welcome back to StockMeta Pro</h3>
+          <p class="google-auth-subtitle">Log in instantly to securely sync and store your custom model settings and credentials directly in your browser.</p>
+          
+          <div class="google-email-input-wrapper">
+            <input type="email" id="google-email-field" class="text-input-field" placeholder="name@gmail.com" required value="stockcreator@gmail.com">
+          </div>
+          
+          <button class="google-btn-submit" id="google-auth-submit-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google G">
+            <span>Continue with Gmail ID</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: API KEYS MANAGER (User Screenshot Inspired)
+       ========================================================================== -->
+  <div class="modal-overlay" id="api-keys-modal">
+    <div class="modal-card api-keys-modal">
+      <div class="modal-header">
+        <span class="modal-title">API Keys Manager</span>
+        <button class="modal-close-btn" onclick="closeModal('api-keys-modal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <!-- Grid Layout: Sidebar Providers + Right Settings Panels -->
+      <div class="api-keys-layout">
+        <div class="api-keys-sidebar">
+          <button class="api-provider-tab active" data-provider="gemini">Gemini API</button>
+          <button class="api-provider-tab" data-provider="mistral">Mistral AI</button>
+          <button class="api-provider-tab" data-provider="openai">OpenAI</button>
+          <button class="api-provider-tab" data-provider="groq">Groq</button>
+          <button class="api-provider-tab" data-provider="openrouter">OpenRouter</button>
+          <button class="api-provider-tab" data-provider="adobestock" style="color:var(--color-cyan);">Adobe Stock</button>
+          <button class="api-provider-tab" data-provider="ollama" style="color:var(--success)">Local (Ollama)</button>
+        </div>
+        
+        <div class="api-keys-panel" id="api-panel-content">
+          <!-- Content is rendered dynamically in app.js based on selected provider -->
+          <div>
+            <div class="form-row">
+              <div class="input-container" style="flex: 1;">
+                <label class="form-label" for="api-key-input" id="api-key-label">API Key:</label>
+                <input type="text" id="api-key-input" class="form-input-text" placeholder="Enter your API key here...">
+              </div>
+              <button class="api-btn add" id="api-key-add-btn">Add</button>
+            </div>
+            <div style="margin-top: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label class="form-label" style="margin-bottom: 0;" id="stored-keys-label">Stored API Keys:</label>
+                <button class="api-btn delete" id="api-key-delete-btn" style="padding: 6px 16px; font-size: 12px; width: auto; height: auto;">Delete Selected Key</button>
+              </div>
+              <div class="keys-listbox" id="stored-keys-listbox">
+                <!-- Dynamically populated list box of masked keys -->
+              </div>
+            </div>
+            <!-- Custom Model field — shows for all providers -->
+            <div id="custom-model-row" style="margin-top: 18px;">
+              <label class="form-label" for="api-custom-model" id="custom-model-label">🤖 Custom Model (Required):</label>
+              <input type="text" id="api-custom-model" class="form-input-text" placeholder="e.g., google/gemini-2.5-flash" style="margin-top: 6px;">
+              <p style="font-size: 11px; color: var(--text-dark); margin-top: 5px;" id="custom-model-hint">Enter the model you want to use (e.g., <strong>google/gemini-2.5-flash</strong> or <strong>moonshotai/kimi-k2.6:free</strong>).</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer: Radio switches matching user screenshot + Save/Cancel -->
+      <div class="api-keys-footer">
+        <div class="active-provider-selector">
+          <span class="active-provider-label">AI Provider:</span>
+          <div class="provider-radio-group">
+            <label class="provider-radio-option">
+              <input type="radio" name="ai-provider-select" value="gemini" checked>
+              <span>Gemini</span>
+            </label>
+            <label class="provider-radio-option">
+              <input type="radio" name="ai-provider-select" value="mistral">
+              <span>Mistral AI</span>
+            </label>
+            <label class="provider-radio-option">
+              <input type="radio" name="ai-provider-select" value="openai">
+              <span>OpenAI</span>
+            </label>
+            <label class="provider-radio-option">
+              <input type="radio" name="ai-provider-select" value="groq">
+              <span>Groq</span>
+            </label>
+            <label class="provider-radio-option">
+              <input type="radio" name="ai-provider-select" value="openrouter">
+              <span class="provider-radio-text">OpenRouter</span>
+            </label>
+            <label class="provider-radio-option" style="border:1px solid var(--success);">
+              <input type="radio" name="ai-provider-select" value="ollama">
+              <span class="provider-radio-text" style="color:var(--success);">Local (Ollama)</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="modal-action-buttons">
+          <button class="modal-action-btn save" id="api-keys-save-btn">Save</button>
+          <button class="modal-action-btn cancel" onclick="closeModal('api-keys-modal')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div> <!-- End app-content-area -->
+</div> <!-- End app-layout -->
+
+  <!-- ==========================================================================
+       TOAST NOTIFICATION ALERTS
+       ========================================================================== -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Custom JS Application Logic -->
+  <script src="app.js?v=29"></script>
+</body>
+</html>
