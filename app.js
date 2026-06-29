@@ -715,6 +715,12 @@ function renderMetadataPreviews() {
     bindInput(`meta-desc-${index}`, 'desc', `desc-counter-${index}`);
     bindInput(`meta-keys-${index}`, 'tags', `keys-counter-${index}`);
   });
+  
+  const regenBtn = document.getElementById('regen-failed-btn');
+  if (regenBtn) {
+    const hasFailed = fileQueue.some(f => f.aiStatus === 'failed');
+    regenBtn.style.display = hasFailed ? 'flex' : 'none';
+  }
 }
 
 function escapeHtml(unsafe) {

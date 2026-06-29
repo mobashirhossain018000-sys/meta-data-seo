@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=14">
   
   <!-- EXIF Library for Image Metadata Extraction -->
   <script src="https://cdn.jsdelivr.net/npm/exif-js?v=1"></script>
@@ -181,6 +181,9 @@
           <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
             <button class="workspace-btn copy-all" id="metadata-generate-btn" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 700; border-radius: 8px; justify-content: center;">
               <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 8px;"></i> Generate Metadata
+            </button>
+            <button class="workspace-btn regen-failed-btn" id="regen-failed-btn" onclick="regenFailedItems()" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; justify-content: center; background: rgba(255, 165, 0, 0.1); color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.3); display: none;">
+              <i class="fa-solid fa-rotate-right" style="margin-right: 8px;"></i> Retry Failed
             </button>
             <button class="workspace-btn export-all" id="metadata-export-btn" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 600; border-radius: 8px; justify-content: center; border: 1px solid var(--border-glass);">
               <i class="fa-solid fa-file-csv" style="margin-right: 8px;"></i> Export All CSV
@@ -497,6 +500,6 @@
   <div class="toast-container" id="toast-container"></div>
 
   <!-- Custom JS Application Logic -->
-  <script src="app.js?v=34"></script>
+  <script src="app.js?v=35"></script>
 </body>
 </html>
