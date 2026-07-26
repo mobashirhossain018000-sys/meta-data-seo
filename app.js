@@ -991,9 +991,11 @@ window.regenFailedItems = async function() {
 
   if (regenBtn) {
     regenBtn.disabled = false;
+    regenBtn.innerHTML = `<i class="fa-solid fa-rotate-right" style="margin-right: 8px;"></i> Retry Failed`;
   }
 
   renderQueueSidebar();
+  renderMetadataPreviews(); // Ensure the unified view updates properly
   showToast("Retry complete!", "success");
 };
 
